@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Loterías Torico - La Suerte del Olentzero</title>
+  
+  <!-- Favicon & Theme -->
+  <meta name="theme-color" content="#2b080d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Google Fonts: Cinzel & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              wine: '#2c080d',
+              dark: '#140406',
+              red: '#b9252b',
+              gold: '#cba045',
+              cream: '#fdfbf7',
+              ticket: '#faf7ee'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['Cinzel', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-b from-brand-dark via-brand-wine to-brand-dark text-stone-100 min-h-dvh flex flex-col justify-between selection:bg-brand-red selection:text-white overflow-x-hidden select-none">
+
+  <!-- Background Canvas for Falling Snow and Chimney Embers -->
+  <canvas id="fx-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Clean, Authentic Header with Official Logo -->
+  <header class="relative z-30 w-full px-4 sm:px-6 py-3 flex items-center justify-between border-b border-amber-900/30 bg-black/40 backdrop-blur-md">
+    
+    <!-- Official Logo (Also acts as secret 3-tap admin trigger) -->
+    <div id="admin-trigger" class="cursor-pointer select-none flex items-center gap-2 py-0.5 active:scale-95 transition-transform" title="Loterías Torico (Toca 3 veces para administración)">
+      <img src="logo-light.png" alt="Loterías Torico" class="h-9 sm:h-11 object-contain">
+    </div>
+
+    <!-- Header Right Controls -->
+    <div class="flex items-center gap-2.5">
+      <!-- Direct Staff Access: El Torico Admin -->
+      <button id="btn-open-admin" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900/90 border border-stone-700/80 hover:border-amber-400/50 text-stone-300 hover:text-amber-200 transition-colors text-xs font-semibold shadow-sm" title="Panel de Administración">
+        <span>🔒</span>
+        <span class="hidden sm:inline">El Torico Admin</span>
+        <span class="sm:hidden">Admin</span>
+      </button>
+
+      <!-- Inactivity Countdown (Kiosk mode) -->
+      <div id="kiosk-timer-pill" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-900/90 border border-stone-700 text-xs font-mono text-stone-300">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="kiosk-timer-seconds">25s</span>
+      </div>
+
+      <!-- Sound Toggle -->
+      <button id="sound-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900/80 border border-stone-700/60 hover:border-amber-400/40 text-stone-300 hover:text-amber-200 transition-colors text-xs font-medium">
+        <span id="sound-icon">🔊</span>
+        <span id="sound-label" class="hidden sm:inline">Sonido</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main id="app-container" class="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full max-w-3xl mx-auto">
+    
+    <!-- ============================================== -->
+    <!-- SCREEN 1: ATTRACT / REPOSO                     -->
+    <!-- ============================================== -->
+    <section id="screen-attract" class="screen-view active w-full flex flex-col items-center justify-center text-center py-4 my-auto">
+      
+      <!-- Brand Logo Presentation -->
+      <div class="mb-4">
+        <img src="logo-light.png" alt="Loterías Torico" class="h-16 sm:h-20 object-contain mx-auto filter drop-shadow">
+      </div>
+
+      <!-- Traditional Tag -->
+      <div class="text-xs uppercase tracking-widest font-semibold text-amber-300/90 mb-2">
+        Sorteo Extraordinario de Navidad • 22 de Diciembre
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="font-serif font-bold text-3xl sm:text-5xl text-amber-100 tracking-tight leading-tight max-w-2xl">
+        La Elección del Olentzero
+      </h1>
+      
+      <!-- Subtitle -->
+      <p class="max-w-lg text-stone-300 text-sm sm:text-base mt-3 font-normal leading-relaxed px-2">
+        Responde 3 preguntas en <strong class="text-amber-200 font-semibold">25 segundos</strong> y descubre el par de décimos de Loterías Torico que el Olentzero tiene preparados para ti.
+      </p>
+
+      <!-- Giant Touch Button -->
+      <div class="w-full max-w-sm mt-8">
+        <button id="btn-start" class="btn-giant group w-full py-5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 font-serif font-black text-lg sm:text-xl uppercase tracking-wider shadow-lg shadow-amber-950/40 border border-amber-300/50 flex items-center justify-center gap-2 transform active:scale-98 transition-all">
+          <span>Consultar al Olentzero</span>
+        </button>
+        <p class="text-xs text-stone-400 mt-2.5 font-medium">Toca la pantalla para comenzar</p>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SCREEN 2: EL VIAJE DEL OLENTZERO (3 Preguntas) -->
+    <!-- ============================================== -->
+    <section id="screen-game-olentzero" class="screen-view hidden w-full flex flex-col items-center max-w-xl py-3 my-auto">
+      
+      <!-- Steps Header -->
+      <div class="w-full flex items-center justify-between mb-5 border-b border-stone-800/70 pb-3">
+        <div>
+          <span class="text-xs text-amber-300 font-serif uppercase tracking-wider">El Juicio del Olentzero</span>
+          <div id="olentzero-step-indicator" class="text-xs text-stone-400 font-medium">Pregunta 1 de 3</div>
+        </div>
+        <div class="w-28 h-1.5 bg-stone-900 rounded-full overflow-hidden border border-stone-800">
+          <div id="olentzero-progress" class="h-full bg-amber-400 transition-all duration-300" style="width: 33%"></div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Conducta -->
+      <div id="olentzero-step-1" class="olentzero-step w-full flex flex-col items-center">
+        <div class="text-center mb-6">
+          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
+            ¿Cómo te has portado este año, majo/a?
+          </h2>
+          <p class="text-xs text-stone-400 mt-1">El Olentzero observa desde el monte antes de repartir la suerte:</p>
+        </div>
+
+        <div class="w-full space-y-3">
+          <button data-answer="angel" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Como un santo varón / una bendita</div>
+              <div class="text-xs text-stone-400 mt-0.5">Trabajando, madrugando y sin meterme con nadie.</div>
+            </div>
+          </button>
+
+          <button data-answer="regular" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">He tenido mis momentos...</div>
+              <div class="text-xs text-stone-400 mt-0.5">Algún almuerzo largo y pequeñas faltas perdonables.</div>
+            </div>
+          </button>
+
+          <button data-answer="trasto" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Casi me echan de la cuadrilla</div>
+              <div class="text-xs text-stone-400 mt-0.5">Mucha fiesta, poco juicio y afición a la parranda.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Ofrenda a la chimenea -->
+      <div id="olentzero-step-2" class="olentzero-step hidden w-full flex flex-col items-center">
+        <div class="text-center mb-6">
+          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
+            ¿Qué echas a la chimenea para avivar la llama?
+          </h2>
+          <p class="text-xs text-stone-400 mt-1">El calor de las brasas guía el rumbo de los bombos:</p>
+        </div>
+
+        <div class="w-full space-y-3">
+          <button data-log="roble" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Leño de roble de Urbasa</div>
+              <div class="text-xs text-stone-400 mt-0.5">Fuego noble, recio y constante para el invierno.</div>
+            </div>
+          </button>
+
+          <button data-log="pacharan" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Trago de pacharán navarro</div>
+              <div class="text-xs text-stone-400 mt-0.5">Para entrar en calor y brindar por la fortuna.</div>
+            </div>
+          </button>
+
+          <button data-log="saco" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Saco de castañas asadas</div>
+              <div class="text-xs text-stone-400 mt-0.5">Tradición del monte y buen augurio para el año nuevo.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Destino del premio -->
+      <div id="olentzero-step-3" class="olentzero-step hidden w-full flex flex-col items-center">
+        <div class="text-center mb-6">
+          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
+            ¿En qué emplearás El Gordo si sale tu número?
+          </h2>
+          <p class="text-xs text-stone-400 mt-1">Para que la suerte sepa a qué puerta tiene que llamar:</p>
+        </div>
+
+        <div class="w-full space-y-3">
+          <button data-goal="agujeros" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Tapar agujeros y celebrarlo con los míos</div>
+              <div class="text-xs text-stone-400 mt-0.5">La hipoteca liquidada y un buen chuletón con los de casa.</div>
+            </div>
+          </button>
+
+          <button data-goal="jefe" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Mandar al jefe a paseo</div>
+              <div class="text-xs text-stone-400 mt-0.5">Decir adiós a madrugar los lunes de invierno.</div>
+            </div>
+          </button>
+
+          <button data-goal="cuadrilla" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
+            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
+            <div>
+              <div class="font-semibold text-stone-100 text-sm sm:text-base">Invitar a toda la cuadrilla</div>
+              <div class="text-xs text-stone-400 mt-0.5">Ronda eterna en la plaza y fiesta por todo lo alto.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SCREEN 3: CALM & ATMOSPHERIC CONSULTING STATE  -->
+    <!-- ============================================== -->
+    <section id="screen-reveal-loading" class="screen-view hidden w-full flex flex-col items-center justify-center text-center max-w-md py-12 my-auto">
+      
+      <!-- Subtle Traditional Flame / Warmth Indicator -->
+      <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
+        <div class="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-400/30 flex items-center justify-center animate-pulse">
+          <div class="w-8 h-8 rounded-full bg-amber-400/30"></div>
+        </div>
+      </div>
+
+      <h2 class="font-serif font-bold text-2xl text-amber-100">
+        Consultando al Olentzero...
+      </h2>
+      
+      <p class="text-stone-300 text-sm mt-2 max-w-xs mx-auto leading-relaxed">
+        El Olentzero revisa en su txabola los números de Loterías Torico que mejor encajan con tu respuesta...
+      </p>
+
+      <div class="flex items-center justify-center gap-2 mt-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0s"></span>
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0.2s"></span>
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0.4s"></span>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- SCREEN 4: RESULTS - 2 CHRISTMAS LOTTERY NUMBERS-->
+    <!-- ============================================== -->
+    <section id="screen-result" class="screen-view hidden w-full flex flex-col items-center max-w-2xl py-3 my-auto">
+      
+      <!-- Top Title -->
+      <div class="text-center mb-3">
+        <span class="text-xs font-semibold text-amber-300/80 uppercase tracking-widest">Sorteo de Navidad 2026</span>
+        <h2 class="font-serif font-bold text-2xl sm:text-3xl text-amber-100 mt-1">
+          Tus 2 Números Recomendados
+        </h2>
+      </div>
+
+      <!-- Verdict Note (Human, Navarra Humor) -->
+      <div class="w-full bg-stone-900/90 p-4 rounded-xl border border-stone-800 shadow-md mb-4 text-center">
+        <div class="text-xs uppercase font-serif tracking-wider text-amber-300/90 font-bold mb-1">
+          Palabra del Olentzero
+        </div>
+        <p id="verdict-text" class="text-xs sm:text-sm text-stone-200 italic leading-relaxed max-w-lg mx-auto">
+          "Dice el Olentzero que este año te has portado con gracia. Te perdona las pequeñas faltas y te deja estos dos décimos bendecidos con un buen trago de pacharán."
+        </p>
+      </div>
+
+      <!-- TWO AUTHENTIC CHRISTMAS LOTTERY TICKETS (DÉCIMOS) -->
+      <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-4">
+        
+        <!-- TICKET 1: PRIMER DÉCIMO -->
+        <div class="decimo-card relative rounded-xl overflow-hidden bg-brand-ticket text-stone-950 p-3.5 border border-stone-300 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-stone-300 pb-2">
+            <img src="logo-cropped.png" alt="Loterías Torico" class="h-6 object-contain">
+            <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-stone-900 text-amber-300 font-serif">1º DÉCIMO</span>
+          </div>
+
+          <!-- Big 5 Digits -->
+          <div class="py-3 text-center my-auto">
+            <div class="text-[9px] font-semibold text-stone-500 uppercase tracking-widest">El Gordo del Olentzero</div>
+            <div id="ticket-number-1" class="font-serif font-black text-4xl sm:text-5xl tracking-widest text-stone-900 my-1">
+              77724
+            </div>
+            <div class="text-[9px] text-stone-600 font-mono">
+              Serie <span id="ticket-serie-1">042</span> • Fracción <span id="ticket-frac-1">07</span>
+            </div>
+          </div>
+
+          <div class="border-t border-stone-300 pt-2 flex items-center justify-between">
+            <div class="text-[10px] font-mono text-stone-800">
+              Ventanilla: <strong id="ticket-code-1" class="text-brand-red font-bold">TORO-24</strong>
+            </div>
+            <div class="font-mono text-[9px] tracking-widest text-stone-400">
+              ||||| | ||| ||||
+            </div>
+          </div>
+        </div>
+
+        <!-- TICKET 2: SEGUNDO DÉCIMO -->
+        <div class="decimo-card relative rounded-xl overflow-hidden bg-brand-ticket text-stone-950 p-3.5 border border-stone-300 shadow-md flex flex-col justify-between">
+          <div class="flex items-center justify-between border-b border-stone-300 pb-2">
+            <img src="logo-cropped.png" alt="Loterías Torico" class="h-6 object-contain">
+            <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-stone-900 text-amber-300 font-serif">2º DÉCIMO</span>
+          </div>
+
+          <!-- Big 5 Digits -->
+          <div class="py-3 text-center my-auto">
+            <div class="text-[9px] font-semibold text-stone-500 uppercase tracking-widest">Décimo de la Cuadrilla</div>
+            <div id="ticket-number-2" class="font-serif font-black text-4xl sm:text-5xl tracking-widest text-stone-900 my-1">
+              14707
+            </div>
+            <div class="text-[9px] text-stone-600 font-mono">
+              Serie <span id="ticket-serie-2">018</span> • Fracción <span id="ticket-frac-2">03</span>
+            </div>
+          </div>
+
+          <div class="border-t border-stone-300 pt-2 flex items-center justify-between">
+            <div class="text-[10px] font-mono text-stone-800">
+              Ventanilla: <strong id="ticket-code-2" class="text-brand-red font-bold">TORO-07</strong>
+            </div>
+            <div class="font-mono text-[9px] tracking-widest text-stone-400">
+              ||| |||| | |||||
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- In-Store Counter Instruction -->
+      <div class="w-full bg-stone-900/70 border border-stone-800 p-3 rounded-xl text-center mb-4">
+        <p class="text-xs sm:text-sm text-amber-200 font-medium">
+          Pide estos números en ventanilla antes de que se agoten en administración.
+        </p>
+      </div>
+
+      <!-- Clean Single Action: Play Again -->
+      <div class="w-full max-w-xs flex justify-center">
+        <button id="btn-play-again" class="w-full py-3.5 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 font-semibold text-sm tracking-wide shadow-md transition-all">
+          Probar de nuevo
+        </button>
+      </div>
+
+      <!-- Inactivity Countdown Note -->
+      <div id="reset-counter-note" class="text-[11px] text-stone-400 mt-3 text-center">
+        El tótem se reiniciará en <span id="result-countdown" class="font-mono text-amber-300 font-semibold">25s</span> para el siguiente cliente.
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: GESTIÓN Y CARGA DE NÚMEROS CON CÓDIGO (ADMIN / LOTERO)  -->
+  <!-- ============================================================== -->
+  <div id="modal-admin" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    
+    <!-- STEP 1: PIN Pad Screen (Acceso con Código) -->
+    <div id="admin-pin-view" class="w-full max-w-sm bg-stone-900 border border-stone-700 rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+      <div class="mb-3">
+        <img src="logo-light.png" alt="Loterías Torico" class="h-10 object-contain">
+      </div>
+      <h3 class="font-serif font-bold text-lg text-amber-200">El Torico Admin</h3>
+      <p class="text-xs text-stone-400 mt-1 mb-4 text-center">Introduce el código PIN de acceso:</p>
+      
+      <!-- PIN Dots Display -->
+      <div class="flex items-center gap-3 my-1">
+        <span class="pin-dot w-3.5 h-3.5 rounded-full border border-stone-600 bg-stone-950"></span>
+        <span class="pin-dot w-3.5 h-3.5 rounded-full border border-stone-600 bg-stone-950"></span>
+        <span class="pin-dot w-3.5 h-3.5 rounded-full border border-stone-600 bg-stone-950"></span>
+        <span class="pin-dot w-3.5 h-3.5 rounded-full border border-stone-600 bg-stone-950"></span>
+      </div>
+      <div id="pin-error" class="text-xs text-red-400 font-medium mt-1 h-4"></div>
+
+      <!-- Numeric Keypad -->
+      <div class="grid grid-cols-3 gap-2 w-full mt-3">
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">1</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">2</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">3</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">4</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">5</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">6</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">7</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">8</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">9</button>
+        <button id="btn-pin-clear" class="p-3 rounded-xl bg-stone-950 text-stone-400 text-xs font-semibold uppercase">Borrar</button>
+        <button class="keypad-btn p-3 rounded-xl bg-stone-800 hover:bg-stone-700 text-lg font-bold font-mono">0</button>
+        <button id="btn-pin-cancel" class="p-3 rounded-xl bg-stone-950 text-stone-400 text-xs font-semibold uppercase">Cerrar</button>
+      </div>
+      <div class="text-[10px] text-stone-500 mt-3 text-center">
+        Código por defecto: <strong class="text-stone-300">1407</strong>
+      </div>
+    </div>
+
+    <!-- STEP 2: Stock Management Dashboard (Carga Rápida & Masiva) -->
+    <div id="admin-dashboard-view" class="hidden w-full max-w-2xl bg-stone-900 border border-stone-700 rounded-2xl p-5 shadow-2xl flex-col max-h-[90dvh] overflow-y-auto">
+      
+      <!-- Dashboard Header -->
+      <div class="flex items-center justify-between border-b border-stone-800 pb-3 mb-4">
+        <div class="flex items-center gap-3">
+          <img src="logo-light.png" alt="Loterías Torico" class="h-8 object-contain">
+          <div>
+            <h3 class="font-serif font-bold text-base sm:text-lg text-amber-200 leading-none">Gestión de Décimos de Navidad</h3>
+            <p class="text-[11px] text-stone-400 mt-1">Carga los números que sugerirá el Olentzero en el tótem</p>
+          </div>
+        </div>
+        <button id="btn-admin-close" class="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-medium">
+          Cerrar
+        </button>
+      </div>
+
+      <!-- Quick Summary Stats -->
+      <div class="grid grid-cols-3 gap-2.5 mb-4">
+        <div class="p-2.5 rounded-xl bg-stone-950 border border-stone-800 text-center">
+          <div class="text-[10px] text-stone-400 uppercase">Disponibles</div>
+          <div id="stat-active-count" class="font-bold text-lg text-emerald-400">8</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-stone-950 border border-stone-800 text-center">
+          <div class="text-[10px] text-stone-400 uppercase">Agotados</div>
+          <div id="stat-soldout-count" class="font-bold text-lg text-stone-500">2</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-stone-950 border border-stone-800 text-center">
+          <div class="text-[10px] text-stone-400 uppercase">Consultas Hoy</div>
+          <div id="stat-today-plays" class="font-bold text-lg text-amber-400">27</div>
+        </div>
+      </div>
+
+      <!-- Section: Carga Masiva (Pegar Lista de Números) -->
+      <div class="bg-stone-950 p-3.5 rounded-xl border border-stone-800 mb-4">
+        <div class="flex items-center justify-between mb-1.5">
+          <h4 class="font-bold text-xs text-amber-300 uppercase tracking-wide">📋 Carga Rápida Masiva (Pegar Lista)</h4>
+          <span class="text-[10px] text-stone-400">Separa por comas, espacios o saltos de línea</span>
+        </div>
+        <textarea id="bulk-numbers-input" rows="2" placeholder="Ejemplo: 77724, 14707, 03412, 89520, 58291..." class="w-full p-2.5 rounded-lg bg-stone-900 border border-stone-700 text-xs font-mono text-amber-200 placeholder:text-stone-600 focus:outline-none focus:border-amber-400"></textarea>
+        <div class="flex items-center justify-between mt-2">
+          <span class="text-[10px] text-stone-500">Se añadirán todos los números válidos de 5 cifras.</span>
+          <button id="btn-bulk-add" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 font-bold text-xs uppercase tracking-wide">
+            + Cargar Números
+          </button>
+        </div>
+      </div>
+
+      <!-- Section: Carga Individual -->
+      <div class="mb-4">
+        <h4 class="font-bold text-xs text-stone-300 uppercase tracking-wide mb-1.5">Añadir Número Individual</h4>
+        <div class="flex gap-2">
+          <input id="new-number-input" type="text" maxlength="5" placeholder="Nº 5 cifras (ej. 89520)" class="flex-1 px-3 py-2 rounded-xl bg-stone-950 border border-stone-700 text-amber-200 font-mono text-xs placeholder:text-stone-600 focus:outline-none focus:border-amber-400">
+          <input id="new-code-input" type="text" placeholder="Código (TORO-20)" class="w-32 px-3 py-2 rounded-xl bg-stone-950 border border-stone-700 text-stone-200 font-mono text-xs placeholder:text-stone-600 focus:outline-none focus:border-amber-400">
+          <button id="btn-add-number" class="px-4 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-600 font-bold text-xs uppercase">
+            Añadir
+          </button>
+        </div>
+      </div>
+
+      <!-- Section: Lista de Números Cargados -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-xs text-stone-300 uppercase tracking-wide">Números en Stock (<span id="stock-total-count">0</span>)</h4>
+          <button id="btn-clear-all-stock" class="text-[10px] text-red-400 hover:text-red-300 underline">
+            Vaciar todos los números
+          </button>
+        </div>
+        <div id="admin-stock-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Settings: Auto-Reset & Cambiar PIN -->
+      <div class="border-t border-stone-800 pt-3 mb-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block text-stone-400 mb-1 font-medium">Auto-Reset por Inactividad:</label>
+          <select id="setting-timeout" class="w-full bg-stone-950 border border-stone-700 text-amber-200 p-2 rounded-xl font-mono focus:outline-none">
+            <option value="15">15 Segundos</option>
+            <option value="20">20 Segundos</option>
+            <option value="25" selected>25 Segundos (Recomendado)</option>
+            <option value="35">35 Segundos</option>
+            <option value="60">60 Segundos</option>
+            <option value="0">Desactivado</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-stone-400 mb-1 font-medium">Cambiar PIN de Acceso (4 dígitos):</label>
+          <input id="setting-new-pin" type="password" maxlength="4" placeholder="1407" class="w-full bg-stone-950 border border-stone-700 text-amber-200 p-2 rounded-xl font-mono focus:outline-none">
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex items-center justify-between border-t border-stone-800 pt-3 mt-2">
+        <button id="btn-reset-stock-defaults" class="text-xs text-stone-500 hover:text-stone-300 underline">
+          Restablecer números de ejemplo
+        </button>
+        <button id="btn-admin-save" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-xs uppercase shadow">
+          Guardar Cambios
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Audio Synthesizer & Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

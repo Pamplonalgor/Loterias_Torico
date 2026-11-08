@@ -1,0 +1,92 @@
+/* Custom Styles for Loterías Torico */
+
+/* Prevent pinch zoom and elastic bounce on Kiosk touch screens */
+html, body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Screen Transitions */
+.screen-view {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.screen-view.hidden {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.screen-view.active {
+  display: flex !important;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Touch Giant Buttons */
+.btn-giant {
+  min-height: 64px;
+  touch-action: manipulation;
+}
+
+/* Authentic Christmas Lottery Ticket Aesthetics */
+.decimo-card {
+  position: relative;
+  background-color: #faf7ef;
+  background-image: 
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.015) 0px, rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.015) 0px, rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 4px);
+  border: 1px solid #dcd3be;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Subtle Guilloché / Watermark effect on ticket */
+.decimo-card::after {
+  content: "LOTERIAS TORICO";
+  position: absolute;
+  right: 12px;
+  bottom: 22px;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(185, 37, 43, 0.07);
+  letter-spacing: 2px;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+/* Error shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%, 75% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.35s ease-in-out;
+}
+
+/* Clean Touch Feedback */
+button:active {
+  transform: scale(0.985);
+}
+
+/* Keypad touch feedback */
+.keypad-btn:active {
+  background-color: #3f3f46;
+}
+
+/* Subtle scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.3);
+  border-radius: 9999px;
+}
