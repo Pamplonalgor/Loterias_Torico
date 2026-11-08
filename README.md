@@ -1,43 +1,37 @@
 # 🎄 Loterías Torico — La Elección del Olentzero
 ### Sorteo Extraordinario de Navidad • Navarra
 
-Aplicación web interactiva para el tótem de **Loterías Torico**. Experiencia de 25 segundos donde el **Olentzero** recomienda un par de décimos del stock real cargado en el local.
+Aplicación web interactiva para el tótem de **Loterías Torico**. Experiencia de 25 segundos donde el **Olentzero** recomienda un par de décimos del stock oficial sincronizado en la nube para todos los dispositivos.
 
 ---
 
-## 🔢 Cómo Cargar los Números de Lotería (con Código)
+## ☁️ Cómo Sincronizar tus Números para que le Salgan a Todo el Mundo
 
-1. En la esquina superior derecha de la pantalla, pulsa el botón **"🔒 El Torico Admin"** (o toca 3 veces el logotipo de Loterías Torico).
-2. Introduce el **código PIN de 4 dígitos** en el teclado táctil:
-   * **PIN por defecto:** `1407` (puedes cambiarlo dentro del panel si lo deseas).
-3. Dentro del panel tienes dos formas de meter los números:
-   * **Carga Masiva (Rápida):** Pega en la caja de texto una lista de números separados por comas, espacios o saltos de línea (ej: `77724, 14707, 03412, 89520, 58291`) y pulsa **"+ Cargar Números"**. El sistema detecta automáticamente todos los números de 5 cifras y los añade a la lista.
-   * **Carga Individual:** Introduce el número de 5 cifras y opcionalmente su código de ventanilla (`TORO-XX`).
-4. **Control de Stock en Vivo:**
-   * Cada número se puede marcar como **Disponible** o **Agotado** con un solo toque (los números agotados no los sugerirá el Olentzero).
-   * Puedes ver el total de números en stock y vaciar la lista cuando quieras.
-5. Pulsa **"Guardar Cambios"** y los números quedarán guardados en el tótem.
+Antes los números solo se guardaban en la memoria local de tu pantalla. Ahora están sincronizados en la nube mediante el archivo central [`stock.json`](stock.json):
+
+1. Pulsa el botón **`🔒 El Torico Admin`** en la cabecera (introduce el PIN **`1407`**).
+2. Pega o añade tus números de 5 cifras en la caja de carga rápida.
+3. Pulsa el botón **`☁️ Publicar para Todos`**:
+   * El sistema subirá tus números directamente al repositorio de GitHub.
+   * Cualquier persona que abra el enlace de la web (en su móvil, tableta o tótem) verá inmediatamente tus números oficiales.
+4. **Opción alternativa (Enlace directo):** Pulsa **`🔗 Copiar Enlace Directo`** para obtener un enlace que lleva los números integrados en la propia URL (ejemplo: `...?s=77724,14707,03412`).
 
 ---
 
 ## 🎯 Experiencia del Cliente (~25 Segundos)
-1. **Inicio:** Logotipo oficial de Loterías Torico, ambientación navideña sobria y botón táctil **"Consultar al Olentzero"**.
+1. **Inicio:** Logotipo oficial de Loterías Torico, ambientación navideña y botón táctil **"Consultar al Olentzero"**.
 2. **Las 3 Preguntas:**
    * *Pregunta 1:* ¿Cómo te has portado este año, majo/a? (Santo varón vs Parrandero).
    * *Pregunta 2:* ¿Qué echas a la chimenea para avivar la llama? (Leño de roble, trago de pacharán o castañas).
    * *Pregunta 3:* ¿En qué emplearás El Gordo si sale tu número? (Tapar hipoteca, mandar al jefe a paseo o invitar a la cuadrilla).
 3. **Pausa Teatral (2 segundos):** El Olentzero examina el bombo en su txabola del monte.
 4. **Resultado con 2 Décimos:**
-   * Recomienda **2 números reales del stock** cargado (1º Décimo Favorito + 2º Décimo de la Cuadrilla).
-   * Los décimos incorporan el logotipo oficial de Loterías Torico, serie, fracción y código de ventanilla (`TORO-XX`).
-   * Instrucción clara: *"Pide estos números en ventanilla antes de que se agoten en administración"*.
-   * Botón limpio: **"Probar de nuevo"**.
-   * Reseteo automático tras 25 segundos de inactividad para el siguiente cliente.
+   * Recomienda **2 números reales del stock oficial** (1º Décimo Favorito + 2º Décimo de la Cuadrilla).
+   * Décimos con el logotipo oficial de Loterías Torico, serie, fracción y código de ventanilla (`TORO-XX`).
+   * Instrucción: *"Pide estos números en ventanilla antes de que se agoten en administración"*.
+   * Reseteo automático tras 25 segundos para el siguiente cliente en el tótem.
 
 ---
 
-## 🚀 Cómo Abrir la Aplicación
-Haz doble clic sobre [`index.html`](index.html) en cualquier navegador, o lánzalo en pantalla completa fija en el tótem:
-```cmd
-msedge.exe --kiosk "c:\Users\moren\OneDrive\Desktop\WEB Interactiva el Torico\index.html" --edge-kiosk-type=fullscreen
-```
+## 🚀 Repositorio
+* **GitHub:** [https://github.com/Pamplonalgor/Loterias_Torico](https://github.com/Pamplonalgor/Loterias_Torico)
