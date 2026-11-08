@@ -1,4 +1,5 @@
 push_github.ps1
+do_push.ps1
 *.tmp
 .DS_Store
 Thumbs.db

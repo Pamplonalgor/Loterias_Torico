@@ -22,10 +22,15 @@
     { number: '12240', code: 'TORO-40', serie: '120', fraccion: '10', available: true }
   ];
 
+  const GITHUB_REPO_OWNER = 'Pamplonalgor';
+  const GITHUB_REPO_NAME = 'Loterias_Torico';
+  const DEFAULT_GITHUB_TOKEN = '';
+
   const DEFAULT_SETTINGS = {
     adminPin: '1407',
     timeoutSeconds: 25,
-    soundEnabled: true
+    soundEnabled: true,
+    githubToken: DEFAULT_GITHUB_TOKEN
   };
 
   let state = {
@@ -51,6 +56,9 @@
         state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(savedSettings) };
       }
 
+      const savedToken = localStorage.getItem('torico_github_token');
+      if (savedToken) state.settings.githubToken = savedToken;
+
       const savedPlays = localStorage.getItem('torico_today_plays');
       if (savedPlays) state.todayPlays = parseInt(savedPlays, 10);
     } catch (e) {
@@ -67,6 +75,9 @@
   function saveSettings() {
     try {
       localStorage.setItem('torico_lottery_settings', JSON.stringify(state.settings));
+      if (state.settings.githubToken) {
+        localStorage.setItem('torico_github_token', state.settings.githubToken);
+      }
     } catch (e) {}
   }
 
@@ -75,6 +86,60 @@
     try {
       localStorage.setItem('torico_today_plays', state.todayPlays.toString());
     } catch (e) {}
+  }
+
+  // ==========================================================================
+  // SHARED CLOUD STOCK SYNC (Para que a todo el mundo le salgan los mismos números)
+  // ==========================================================================
+  async function loadSharedStock() {
+    // 1. URL parameter check (?s=77724,14707 or ?stock=...)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sParam = urlParams.get('s') || urlParams.get('stock');
+      if (sParam) {
+        const rawNums = sParam.split(/[,;\s]+/);
+        const validNums = rawNums.filter(n => /^\d{5}$/.test(n));
+        if (validNums.length > 0) {
+          state.stock = validNums.map(n => ({
+            number: n,
+            code: `TORO-${n.slice(-2)}`,
+            serie: String(Math.floor(Math.random() * 150) + 1).padStart(3, '0'),
+            fraccion: String(Math.floor(Math.random() * 10) + 1).padStart(2, '0'),
+            available: true
+          }));
+          saveStock();
+          console.log('Números cargados desde parámetro URL');
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch stock.json from GitHub
+    const timestamp = Date.now();
+    const tryUrls = [
+      `./stock.json?_t=${timestamp}`,
+      `https://raw.githubusercontent.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/main/stock.json?_t=${timestamp}`
+    ];
+
+    for (const url of tryUrls) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (res.ok) {
+          const remoteStock = await res.json();
+          if (Array.isArray(remoteStock) && remoteStock.length > 0) {
+            state.stock = remoteStock;
+            saveStock();
+            console.log('Stock oficial sincronizado desde GitHub:', remoteStock.length, 'números');
+            return;
+          }
+        }
+      } catch (e) {
+        // Continue to next URL
+      }
+    }
+
+    // 3. Fallback to localStorage / defaults
+    loadState();
   }
 
   // ==========================================================================
@@ -531,6 +596,9 @@
     document.getElementById('stock-total-count').textContent = state.stock.length;
     document.getElementById('setting-timeout').value = state.settings.timeoutSeconds.toString();
 
+    const tokenInput = document.getElementById('setting-github-token');
+    if (tokenInput) tokenInput.value = state.settings.githubToken || '';
+
     const stockContainer = document.getElementById('admin-stock-list');
     stockContainer.innerHTML = '';
 
@@ -587,10 +655,102 @@
   }
 
   // ==========================================================================
+  // PUBLICAR STOCK EN GITHUB (Para que a todo el mundo le salgan los mismos)
+  // ==========================================================================
+  async function publishStockToGitHub() {
+    const statusEl = document.getElementById('sync-status');
+    const labelEl = document.getElementById('sync-label');
+    const iconEl = document.getElementById('sync-icon');
+
+    const tokenInput = document.getElementById('setting-github-token');
+    let token = (tokenInput && tokenInput.value.trim()) || state.settings.githubToken || localStorage.getItem('torico_github_token');
+
+    if (!token) {
+      token = prompt('Introduce tu token de GitHub (ghp_...) para sincronizar la web:');
+      if (!token) return;
+      token = token.trim();
+    }
+
+    state.settings.githubToken = token;
+    saveSettings();
+
+    if (labelEl) labelEl.textContent = 'Publicando...';
+    if (iconEl) iconEl.textContent = '⏳';
+    if (statusEl) {
+      statusEl.className = 'text-[11px] text-amber-300 font-medium mt-1';
+      statusEl.textContent = 'Subiendo números a GitHub para todos los dispositivos...';
+      statusEl.classList.remove('hidden');
+    }
+
+    try {
+      const path = 'stock.json';
+      const headers = {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      };
+
+      // Get current file sha if exists
+      let sha = null;
+      try {
+        const fileRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${path}`, { headers });
+        if (fileRes.ok) {
+          const fileData = await fileRes.json();
+          sha = fileData.sha;
+        }
+      } catch (e) {}
+
+      // Convert JSON to Base64 (supporting UTF-8 characters)
+      const jsonString = JSON.stringify(state.stock, null, 2);
+      const utf8Bytes = new TextEncoder().encode(jsonString);
+      let binary = '';
+      utf8Bytes.forEach(b => binary += String.fromCharCode(b));
+      const base64Content = btoa(binary);
+
+      const bodyObj = {
+        message: 'feat: Actualizar stock.json oficial para todos los clientes',
+        content: base64Content
+      };
+      if (sha) bodyObj.sha = sha;
+
+      const putRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contents/${path}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(bodyObj)
+      });
+
+      if (putRes.ok) {
+        Sound.celebration();
+        saveStock();
+        if (statusEl) {
+          statusEl.className = 'text-[11px] text-emerald-400 font-medium mt-1';
+          statusEl.textContent = '✅ ¡Publicado con éxito! Ahora cualquier persona que abra el enlace verá tus números.';
+        }
+        alert('¡Éxito total! Tus números se han publicado en GitHub. A partir de ahora, todo el mundo que abra el enlace verá tus números.');
+      } else {
+        const errJson = await putRes.json();
+        throw new Error(errJson.message || 'Error en la petición a GitHub');
+      }
+    } catch (err) {
+      console.error(err);
+      if (statusEl) {
+        statusEl.className = 'text-[11px] text-red-400 font-medium mt-1';
+        statusEl.textContent = '❌ Error al sincronizar: ' + err.message;
+      }
+      alert('Hubo un problema al subir a GitHub: ' + err.message + '\nVerifica que el token de GitHub es correcto en los ajustes.');
+    } finally {
+      if (labelEl) labelEl.textContent = 'Publicar para Todos';
+      if (iconEl) iconEl.textContent = '☁️';
+    }
+  }
+
+  // ==========================================================================
   // 9. INITIALIZATION & EVENTS WIRING
   // ==========================================================================
-  function initApp() {
+  async function initApp() {
     loadState();
+    await loadSharedStock();
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     initParticles();
@@ -634,7 +794,7 @@
       };
     }
 
-    // Direct Header Button: "Cargar Números"
+    // Direct Header Button: "El Torico Admin"
     if (btnOpenAdmin) {
       btnOpenAdmin.onclick = openAdminPinPad;
     }
@@ -694,14 +854,12 @@
           return;
         }
 
-        // Match all 5-digit numbers separated by spaces, commas, semicolons or lines
         const matches = text.match(/\b\d{5}\b/g);
         if (!matches || matches.length === 0) {
           alert('No se encontraron números válidos de 5 cifras. Recuerda que deben tener exactamente 5 dígitos (ej. 77724, 14707).');
           return;
         }
 
-        // Filter duplicates and add to front of stock
         let addedCount = 0;
         const existingSet = new Set(state.stock.map(s => s.number));
 
@@ -723,7 +881,32 @@
         textarea.value = '';
         Sound.chimes();
         renderAdminDashboard();
-        alert(`¡Éxito! Se han cargado ${addedCount} números nuevos al tótem.`);
+        alert(`¡Cargados ${addedCount} números! Ahora puedes pulsar "Publicar para Todos" para que se aplique en la web.`);
+      };
+    }
+
+    // --- BOTÓN SINCRONIZAR CON TODOS (PUBLICAR EN GITHUB) ---
+    const btnSyncCloud = document.getElementById('btn-sync-cloud');
+    if (btnSyncCloud) {
+      btnSyncCloud.onclick = publishStockToGitHub;
+    }
+
+    // --- BOTÓN COMPARTIR ENLACE DIRECTO ---
+    const btnShareLink = document.getElementById('btn-share-link');
+    if (btnShareLink) {
+      btnShareLink.onclick = () => {
+        Sound.tap();
+        const nums = state.stock.filter(s => s.available).map(s => s.number).join(',');
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?s=${nums}`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(shareUrl).then(() => {
+            alert('¡Enlace directo copiado al portapapeles!\nCualquier persona que abra este enlace cargará automáticamente estos números:\n\n' + shareUrl);
+          }).catch(() => prompt('Copia este enlace directo:', shareUrl));
+        } else {
+          prompt('Copia este enlace directo:', shareUrl);
+        }
       };
     }
 
@@ -737,7 +920,6 @@
         const codeVal = inputCode.value.trim() || `TORO-${val.slice(-2)}`;
 
         if (val.length === 5 && !isNaN(val)) {
-          // Check if already exists
           if (state.stock.some(s => s.number === val)) {
             alert('Este número ya está en la lista.');
             return;
@@ -773,7 +955,7 @@
       };
     }
 
-    // --- GUARDAR AJUSTES & NUEVO PIN ---
+    // --- GUARDAR AJUSTES LOCALES & NUEVO PIN ---
     const btnAdminSave = document.getElementById('btn-admin-save');
     if (btnAdminSave) {
       btnAdminSave.onclick = () => {
@@ -784,10 +966,16 @@
         if (newPinInput && newPinInput.value.trim().length === 4) {
           state.settings.adminPin = newPinInput.value.trim();
           newPinInput.value = '';
-          alert('¡Ajustes y nuevo PIN guardados correctamente!');
+        }
+
+        const tokenInput = document.getElementById('setting-github-token');
+        if (tokenInput && tokenInput.value.trim()) {
+          state.settings.githubToken = tokenInput.value.trim();
         }
 
         saveSettings();
+        saveStock();
+        alert('Ajustes guardados localmente. Recuerda pulsar "Publicar para Todos" si quieres que estos números se suban a la web para todo el mundo.');
         closeAdminModal();
       };
     }
