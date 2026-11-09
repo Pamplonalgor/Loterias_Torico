@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartel A4 - Loterías Torico & Olentzero</title>
+
+  <!-- Google Fonts: Cinzel & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#9e1b22',
+              darkred: '#701016',
+              wine: '#3d090e',
+              gold: '#cba045',
+              darkgold: '#8c671b',
+              cream: '#fdfcf9',
+              paper: '#faf7ef'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['Cinzel', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Exact A4 Dimensions for print and screen preview */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media screen {
+      body {
+        background-color: #1e1e1e;
+        padding: 24px 12px;
+      }
+      .a4-page {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 12px 50px rgba(0,0,0,0.5);
+      }
+    }
+
+    @media print {
+      html, body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .a4-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Traditional lottery decorative hairline frame */
+    .lottery-border {
+      border: 2.5px solid #9e1b22;
+      position: relative;
+    }
+    .lottery-border::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 1px solid #cba045;
+      pointer-events: none;
+    }
+
+    /* Corner ornamental flourishes */
+    .corner-dec {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: #9e1b22;
+      pointer-events: none;
+    }
+    .corner-tl { top: 6px; left: 6px; border-top: 2px solid #9e1b22; border-left: 2px solid #9e1b22; }
+    .corner-tr { top: 6px; right: 6px; border-top: 2px solid #9e1b22; border-right: 2px solid #9e1b22; }
+    .corner-bl { bottom: 6px; left: 6px; border-bottom: 2px solid #9e1b22; border-left: 2px solid #9e1b22; }
+    .corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid #9e1b22; border-right: 2px solid #9e1b22; }
+  </style>
+</head>
+<body class="font-sans antialiased text-stone-900">
+
+  <!-- FLOATING SCREEN CONTROLS (SOLO VISIBLE EN PANTALLA, OCULTO AL IMPRIMIR) -->
+  <div class="no-print max-w-2xl mx-auto mb-6 p-4 bg-stone-900 border border-stone-700 rounded-2xl shadow-2xl flex flex-wrap items-center justify-between gap-3 text-stone-200">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-xl">
+        🖨️
+      </div>
+      <div>
+        <div class="font-bold text-sm text-amber-200">Cartel A4 para Escaparate o Local</div>
+        <div class="text-[11px] text-stone-400">Diseñado a medida para imprimir en folio A4 sin desajustes</div>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <!-- Toggle Logo Boina / Oficial -->
+      <button id="btn-toggle-logo" class="px-3 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold border border-stone-600 transition-colors" title="Alternar versión del logo">
+        <span>🎩</span>
+        <span id="label-toggle-logo">Con Boina</span>
+      </button>
+
+      <!-- Botón Imprimir Directo -->
+      <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-950/40 transition-transform active:scale-95 flex items-center gap-1.5">
+        <span>Imprimir (Ctrl + P)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- A4 POSTER CANVAS (210mm x 297mm)                         -->
+  <!-- ======================================================== -->
+  <div class="a4-page relative flex flex-col justify-between p-[9mm] bg-brand-cream overflow-hidden">
+    
+    <!-- Outer Decorative Lottery Border Frame -->
+    <div class="lottery-border w-full h-full flex flex-col justify-between p-[6mm] relative">
+      
+      <!-- Corners -->
+      <div class="corner-dec corner-tl"></div>
+      <div class="corner-dec corner-tr"></div>
+      <div class="corner-dec corner-bl"></div>
+      <div class="corner-dec corner-br"></div>
+
+      <!-- 1. HEADER: BRAND LOGO & OFFICIAL RIBBON -->
+      <header class="text-center pt-0.5">
+        <!-- Official Logo (Conmutable) -->
+        <div class="flex items-center justify-center mb-1">
+          <img id="poster-logo" src="logo-boina-white.png" alt="Loterías Torico" class="h-[21mm] object-contain">
+        </div>
+        
+        <!-- Elegant Traditional Lottery Ribbon Badge -->
+        <div class="inline-flex items-center gap-2 px-5 py-1 rounded-full bg-brand-wine text-amber-200 text-[9.5pt] font-serif font-bold uppercase tracking-widest shadow-sm">
+          <span>★ Sorteo Extraordinario de Navidad • 22 de Diciembre ★</span>
+        </div>
+      </header>
+
+      <!-- 2. HERO CALL TO ACTION -->
+      <div class="text-center px-1 my-auto">
+        <h1 class="font-serif font-black text-[27pt] leading-[1.08] text-brand-red uppercase tracking-tight">
+          ¿Cuál es tu Décimo<br>de la Suerte?
+        </h1>
+        
+        <p class="font-serif font-bold text-[13.5pt] text-stone-800 mt-2 tracking-wide leading-snug">
+          Descubre en <span class="text-brand-red font-black underline decoration-amber-500 decoration-2">25 segundos</span> los 2 números que el Olentzero recomienda para ti este año.
+        </p>
+      </div>
+
+      <!-- 3. CENTRAL LARGE QR CODE SECTION (MAXIMUM READABILITY FROM OUTSIDE) -->
+      <div class="flex flex-col items-center justify-center my-auto">
+        
+        <!-- Top prompt with phone icon -->
+        <div class="flex items-center gap-2 px-5 py-1.5 rounded-xl bg-brand-red text-white text-[11pt] font-bold uppercase tracking-wider mb-2 shadow-sm">
+          <span>📱</span>
+          <span>Apunta con la cámara de tu móvil</span>
+        </div>
+
+        <!-- The Big QR Code Frame (86mm x 86mm vector SVG) -->
+        <div class="relative p-3.5 bg-white rounded-2xl border-2 border-stone-900 shadow-md">
+          <img src="qr-code.svg" alt="Escanear QR Loterías Torico" class="w-[84mm] h-[84mm] object-contain block">
+          
+          <!-- Precise corner framing marks -->
+          <div class="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 border-brand-red"></div>
+          <div class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 border-t-2 border-r-2 border-brand-red"></div>
+          <div class="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 border-b-2 border-l-2 border-brand-red"></div>
+          <div class="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 border-b-2 border-r-2 border-brand-red"></div>
+        </div>
+
+        <!-- Call to action label -->
+        <div class="text-center mt-2.5">
+          <div class="font-bold text-[12pt] text-stone-900 tracking-wide">
+            ¡ESCANEA AQUÍ Y JUEGA AL INSTANTE!
+          </div>
+          <div class="text-[9pt] text-stone-600 font-medium">
+            Sin instalar aplicaciones • Directo desde tu navegador
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. THREE CONVERSION STEPS -->
+      <div class="grid grid-cols-3 gap-2 px-1 my-auto">
+        
+        <!-- Step 1 -->
+        <div class="p-2.5 rounded-xl bg-stone-100/95 border border-stone-300 text-center flex flex-col items-center">
+          <div class="w-6 h-6 rounded-full bg-brand-red text-white font-bold text-[9pt] flex items-center justify-center mb-1">
+            1
+          </div>
+          <div class="font-bold text-[9.5pt] text-stone-900 leading-tight">Escanea el QR</div>
+          <div class="text-[8pt] text-stone-600 mt-0.5 leading-snug">Con la cámara de cualquier teléfono.</div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-2.5 rounded-xl bg-stone-100/95 border border-stone-300 text-center flex flex-col items-center">
+          <div class="w-6 h-6 rounded-full bg-brand-red text-white font-bold text-[9pt] flex items-center justify-center mb-1">
+            2
+          </div>
+          <div class="font-bold text-[9.5pt] text-stone-900 leading-tight">3 Preguntas</div>
+          <div class="text-[8pt] text-stone-600 mt-0.5 leading-snug">El Olentzero evalúa tu suerte en 25s.</div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-center flex flex-col items-center">
+          <div class="w-6 h-6 rounded-full bg-amber-600 text-white font-bold text-[9pt] flex items-center justify-center mb-1">
+            3
+          </div>
+          <div class="font-bold text-[9.5pt] text-stone-900 leading-tight">Pídelo en Caja</div>
+          <div class="text-[8pt] text-stone-700 mt-0.5 leading-snug font-medium">Dile el número al lotero antes de que vuele.</div>
+        </div>
+
+      </div>
+
+      <!-- 5. FOOTER BANNER -->
+      <footer class="mt-1.5">
+        <div class="w-full bg-brand-wine text-white py-2.5 px-4 rounded-xl text-center shadow-sm border border-amber-500/40">
+          <div class="font-serif font-bold text-[11pt] text-amber-200 tracking-wider uppercase">
+            📍 Administración de Loterías "El Torico" • Navarra
+          </div>
+          <div class="text-[8.5pt] text-stone-300 mt-0.5">
+            Décimos oficiales disponibles en ventanilla y en el tótem de la entrada.
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Toggle between Festive Boina logo and Clean Official logo
+    const btnToggleLogo = document.getElementById('btn-toggle-logo');
+    const posterLogo = document.getElementById('poster-logo');
+    const labelToggleLogo = document.getElementById('label-toggle-logo');
+
+    let isBoina = true;
+    if (btnToggleLogo && posterLogo) {
+      btnToggleLogo.onclick = () => {
+        isBoina = !isBoina;
+        if (isBoina) {
+          posterLogo.src = 'logo-boina-white.png';
+          labelToggleLogo.textContent = 'Con Boina';
+        } else {
+          posterLogo.src = 'logo-cropped.png';
+          labelToggleLogo.textContent = 'Logo Clásico';
+        }
+      };
+    }
+  </script>
+</body>
+</html>
