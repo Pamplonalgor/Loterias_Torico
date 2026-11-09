@@ -1,29 +1,43 @@
 [
   {
-    "number": "18912",
-    "code": "TORO-12",
-    "serie": "117",
-    "fraccion": "05",
-    "available": true
-  },
-  {
-    "number": "00800",
-    "code": "TORO-00",
+    "number": "92846",
+    "code": "TORO-46",
     "serie": "040",
-    "fraccion": "05",
+    "fraccion": "08",
     "available": true
   },
   {
-    "number": "17757",
-    "code": "TORO-57",
-    "serie": "144",
+    "number": "19442",
+    "code": "TORO-42",
+    "serie": "032",
+    "fraccion": "03",
+    "available": true
+  },
+  {
+    "number": "46633",
+    "code": "TORO-33",
+    "serie": "062",
     "fraccion": "09",
     "available": true
   },
   {
-    "number": "20220",
-    "code": "TORO-20",
-    "serie": "078",
+    "number": "21290",
+    "code": "TORO-90",
+    "serie": "096",
+    "fraccion": "02",
+    "available": true
+  },
+  {
+    "number": "17675",
+    "code": "TORO-75",
+    "serie": "057",
+    "fraccion": "02",
+    "available": true
+  },
+  {
+    "number": "61146",
+    "code": "TORO-46",
+    "serie": "035",
     "fraccion": "04",
     "available": true
   }
