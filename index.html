@@ -98,173 +98,319 @@
 
       <!-- Main Headline -->
       <h1 class="font-serif font-bold text-3xl sm:text-5xl text-amber-100 tracking-tight leading-tight max-w-2xl">
-        La Elección del Olentzero
+        El Saco del Olentzero
       </h1>
       
       <!-- Subtitle -->
       <p class="max-w-lg text-stone-300 text-sm sm:text-base mt-3 font-normal leading-relaxed px-2">
-        Responde 3 preguntas en <strong class="text-amber-200 font-semibold">25 segundos</strong> y descubre el par de décimos de Loterías Torico que el Olentzero tiene preparados para ti.
+        Toca en la pantalla la <strong class="text-amber-200">botella de pacharán</strong>, los <strong class="text-amber-200">churros</strong> y la <strong class="text-amber-200">chistorra</strong>. ¡Entran en su saco y salen tus dos décimos de la suerte!
       </p>
 
       <!-- Giant Touch Button -->
-      <div class="w-full max-w-sm mt-8">
+      <div class="w-full max-w-sm mt-7">
         <button id="btn-start" class="btn-giant group w-full py-5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 font-serif font-black text-lg sm:text-xl uppercase tracking-wider shadow-lg shadow-amber-950/40 border border-amber-300/50 flex items-center justify-center gap-2 transform active:scale-98 transition-all">
-          <span>Consultar al Olentzero</span>
+          <span>🎅 ¡Llenar el Saco de la Suerte!</span>
         </button>
         <p class="text-xs text-stone-400 mt-2.5 font-medium">Toca la pantalla para comenzar</p>
       </div>
     </section>
 
     <!-- ============================================== -->
-    <!-- SCREEN 2: EL VIAJE DEL OLENTZERO (3 Preguntas) -->
+    <!-- SCREEN 2: EL SACO DEL OLENTZERO (TOCAR 3)      -->
     <!-- ============================================== -->
-    <section id="screen-game-olentzero" class="screen-view hidden w-full flex flex-col items-center max-w-xl py-3 my-auto">
+    <section id="screen-game-olentzero" class="screen-view hidden w-full flex flex-col items-center max-w-2xl py-2 my-auto">
       
-      <!-- Steps Header -->
-      <div class="w-full flex items-center justify-between mb-5 border-b border-stone-800/70 pb-3">
-        <div>
-          <span class="text-xs text-amber-300 font-serif uppercase tracking-wider">El Juicio del Olentzero</span>
-          <div id="olentzero-step-indicator" class="text-xs text-stone-400 font-medium">Pregunta 1 de 3</div>
-        </div>
-        <div class="w-28 h-1.5 bg-stone-900 rounded-full overflow-hidden border border-stone-800">
-          <div id="olentzero-progress" class="h-full bg-amber-400 transition-all duration-300" style="width: 33%"></div>
-        </div>
-      </div>
-
-      <!-- STEP 1: Conducta -->
-      <div id="olentzero-step-1" class="olentzero-step w-full flex flex-col items-center">
-        <div class="text-center mb-6">
-          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
-            ¿Cómo te has portado este año, majo/a?
-          </h2>
-          <p class="text-xs text-stone-400 mt-1">El Olentzero observa desde el monte antes de repartir la suerte:</p>
+      <!-- Top Status Header with Sack Counter -->
+      <div class="w-full flex items-center justify-between mb-3 border-b border-stone-800/80 pb-2.5 px-1">
+        <div class="flex items-center gap-2">
+          <span class="text-base sm:text-lg">🎒</span>
+          <div>
+            <h2 class="text-xs sm:text-sm font-serif font-bold text-amber-200 leading-tight">El Saco del Olentzero</h2>
+            <p class="text-[10px] text-stone-400">Toca 3 cosas típicas con el dedo</p>
+          </div>
         </div>
 
-        <div class="w-full space-y-3">
-          <button data-answer="angel" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Como un santo varón / una bendita</div>
-              <div class="text-xs text-stone-400 mt-0.5">Trabajando, madrugando y sin meterme con nadie.</div>
-            </div>
-          </button>
-
-          <button data-answer="regular" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">He tenido mis momentos...</div>
-              <div class="text-xs text-stone-400 mt-0.5">Algún almuerzo largo y pequeñas faltas perdonables.</div>
-            </div>
-          </button>
-
-          <button data-answer="trasto" class="olentzero-opt-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Casi me echan de la cuadrilla</div>
-              <div class="text-xs text-stone-400 mt-0.5">Mucha fiesta, poco juicio y afición a la parranda.</div>
-            </div>
-          </button>
+        <!-- Visual Counter Pill (0 de 3) -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-900 border border-amber-500/30 text-xs">
+          <span class="font-bold text-amber-300 font-mono" id="sack-counter-text">0 / 3</span>
+          <div class="flex items-center gap-1">
+            <span id="dot-1" class="w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 transition-all"></span>
+            <span id="dot-2" class="w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 transition-all"></span>
+            <span id="dot-3" class="w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 transition-all"></span>
+          </div>
         </div>
       </div>
 
-      <!-- STEP 2: Ofrenda a la chimenea -->
-      <div id="olentzero-step-2" class="olentzero-step hidden w-full flex flex-col items-center">
-        <div class="text-center mb-6">
-          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
-            ¿Qué echas a la chimenea para avivar la llama?
-          </h2>
-          <p class="text-xs text-stone-400 mt-1">El calor de las brasas guía el rumbo de los bombos:</p>
+      <!-- CENTER STAGE: OLENTZERO CON SU SACO MÁGICO -->
+      <div class="relative w-full flex flex-col items-center justify-center my-1">
+        
+        <!-- Animated Speech Bubble -->
+        <div id="olentzero-bubble" class="relative mb-2 px-4 py-2 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-center max-w-md shadow-md transition-all">
+          <p id="bubble-text" class="text-xs sm:text-sm font-serif text-amber-100 font-medium leading-snug">
+            «¡Aupa! Toca la <strong class="text-amber-300">botella de pacharán</strong>, los <strong class="text-amber-300">churros</strong> y la <strong class="text-amber-300">chistorra</strong> para meterlos al saco.»
+          </p>
+          <!-- Speech triangle pointer -->
+          <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-stone-900 border-r border-b border-amber-500/40 rotate-45"></div>
         </div>
 
-        <div class="w-full space-y-3">
-          <button data-log="roble" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Leño de roble de Urbasa</div>
-              <div class="text-xs text-stone-400 mt-0.5">Fuego noble, recio y constante para el invierno.</div>
-            </div>
-          </button>
+        <!-- Olentzero & Sack Vector Illustration Stage -->
+        <div class="relative w-48 sm:w-56 h-48 sm:h-56 flex items-center justify-center float-bob">
+          
+          <svg id="olentzero-stage-svg" viewBox="0 0 280 270" class="w-full h-full overflow-visible drop-shadow-2xl">
+            <defs>
+              <!-- Burlap Sack Gradient -->
+              <radialGradient id="sackGrad" cx="45%" cy="50%" r="55%">
+                <stop offset="0%" stop-color="#b45309" />
+                <stop offset="70%" stop-color="#78350f" />
+                <stop offset="100%" stop-color="#451a03" />
+              </radialGradient>
+              <!-- Inside Sack Darkness -->
+              <radialGradient id="mouthGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#1c0d02" />
+                <stop offset="100%" stop-color="#0a0501" />
+              </radialGradient>
+              <!-- Gold Glow Filter -->
+              <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
 
-          <button data-log="pacharan" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Trago de pacharán navarro</div>
-              <div class="text-xs text-stone-400 mt-0.5">Para entrar en calor y brindar por la fortuna.</div>
-            </div>
-          </button>
+            <!-- 1. OLENTZERO CHARACTER (BACKGROUND) -->
+            <!-- Torso / Charcoal Smock -->
+            <path d="M70,160 Q140,140 210,160 L220,240 Q140,250 60,240 Z" fill="#27272a" stroke="#18181b" stroke-width="2" />
+            
+            <!-- Red Kerchief (Pañuelico Rojo) -->
+            <path d="M110,128 Q140,145 170,128 L145,155 L135,155 Z" fill="#b91c1c" stroke="#991b1b" stroke-width="1.5" />
 
-          <button data-log="saco" class="olentzero-log-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Saco de castañas asadas</div>
-              <div class="text-xs text-stone-400 mt-0.5">Tradición del monte y buen augurio para el año nuevo.</div>
-            </div>
-          </button>
+            <!-- Face (Rosy) -->
+            <circle cx="140" cy="85" r="32" fill="#fed7aa" stroke="#fdba74" stroke-width="1.5" />
+            
+            <!-- Rosy Cheeks -->
+            <circle cx="122" cy="88" r="7" fill="#f472b6" opacity="0.4" />
+            <circle cx="158" cy="88" r="7" fill="#f472b6" opacity="0.4" />
+
+            <!-- Eyes (Friendly Twinkle) -->
+            <path d="M124,78 Q129,74 134,78" fill="none" stroke="#27272a" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M146,78 Q151,74 156,78" fill="none" stroke="#27272a" stroke-width="2.5" stroke-linecap="round" />
+            
+            <!-- White Eyebrows -->
+            <path d="M122,72 Q129,68 136,73" fill="none" stroke="#f4f4f5" stroke-width="3" stroke-linecap="round" />
+            <path d="M144,73 Q151,68 158,72" fill="none" stroke="#f4f4f5" stroke-width="3" stroke-linecap="round" />
+
+            <!-- Nose -->
+            <path d="M138,82 Q140,88 143,84" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" />
+
+            <!-- Snowy White Fluffy Beard -->
+            <path d="M112,85 C100,125 110,148 140,148 C170,148 180,125 168,85 C160,102 140,102 122,102 C116,95 113,89 112,85 Z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+            <path d="M124,96 Q140,104 156,96" fill="none" stroke="#cbd5e1" stroke-width="1.5" />
+
+            <!-- Traditional Pipe (Pipa) -->
+            <path d="M145,98 L168,104 L170,95 L176,96 L174,108 L165,106 Z" fill="#78350f" stroke="#451a03" stroke-width="1" />
+            <!-- Smoke puffs -->
+            <circle cx="178" cy="90" r="3" fill="#ffffff" opacity="0.6" />
+            <circle cx="183" cy="83" r="4.5" fill="#ffffff" opacity="0.4" />
+            <circle cx="190" cy="74" r="6" fill="#ffffff" opacity="0.25" />
+
+            <!-- Basque Beret (Txapela Negra) -->
+            <path d="M85,70 C85,42 120,32 155,34 C195,36 205,52 195,72 C190,78 170,82 140,82 C105,82 86,76 85,70 Z" fill="#18181b" stroke="#09090b" stroke-width="2" />
+            <!-- Txapela stem (Rabicho) -->
+            <path d="M145,34 L146,26" stroke="#18181b" stroke-width="3" stroke-linecap="round" />
+
+            <!-- 2. EL SACO MÁGICO (FOREGROUND) -->
+            <g id="olentzero-sack" class="cursor-pointer transition-transform" style="transform-origin: 140px 190px;">
+              
+              <!-- Glow halo when full -->
+              <ellipse id="sack-aura" cx="140" cy="195" rx="75" ry="55" fill="#f59e0b" opacity="0" filter="url(#goldGlow)" />
+
+              <!-- Sack Body (Plump, rustic burlap bag) -->
+              <path d="M95,148 C65,168 62,228 100,252 C125,266 155,266 180,252 C218,228 215,168 185,148 Z" fill="url(#sackGrad)" stroke="#451a03" stroke-width="2.5" />
+              
+              <!-- Stitched texture patches -->
+              <path d="M102,185 L108,195 M100,190 L109,190" stroke="#fde047" stroke-width="1.5" opacity="0.6" />
+              <path d="M172,210 L178,220 M170,215 L179,215" stroke="#fde047" stroke-width="1.5" opacity="0.6" />
+
+              <!-- Loterías Torico Mini Silhouette Badge on Sack -->
+              <circle cx="140" cy="205" r="16" fill="#9e1b22" stroke="#fef08a" stroke-width="1.5" />
+              <!-- Mini Bull Horns & Head -->
+              <path d="M132,203 Q140,207 148,203 Q152,198 147,196 Q140,200 133,196 Q128,198 132,203 Z" fill="#fef08a" />
+              <circle cx="136" cy="207" r="1" fill="#9e1b22" />
+              <circle cx="144" cy="207" r="1" fill="#9e1b22" />
+
+              <!-- Golden Tied Rope Neck -->
+              <ellipse cx="140" cy="148" rx="46" ry="10" fill="none" stroke="#fbbf24" stroke-width="4" stroke-dasharray="6,3" />
+              
+              <!-- Sack Mouth Opening (TARGET WHERE ITEMS DIVE IN) -->
+              <ellipse id="sack-mouth-target" cx="140" cy="146" rx="42" ry="12" fill="url(#mouthGrad)" stroke="#f59e0b" stroke-width="2" />
+              
+              <!-- Mystery golden sparkle inside the sack opening -->
+              <ellipse cx="140" cy="147" rx="20" ry="4" fill="#fbbf24" opacity="0.5" />
+            </g>
+
+            <!-- 3. OLENTZERO'S HANDS HOLDING SACK OPEN -->
+            <ellipse cx="94" cy="146" rx="10" ry="7" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" transform="rotate(-15 94 146)" />
+            <ellipse cx="186" cy="146" rx="10" ry="7" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" transform="rotate(15 186 146)" />
+          </svg>
+
         </div>
+
       </div>
 
-      <!-- STEP 3: Destino del premio -->
-      <div id="olentzero-step-3" class="olentzero-step hidden w-full flex flex-col items-center">
-        <div class="text-center mb-6">
-          <h2 class="font-serif font-bold text-xl sm:text-2xl text-stone-100">
-            ¿En qué emplearás El Gordo si sale tu número?
-          </h2>
-          <p class="text-xs text-stone-400 mt-1">Para que la suerte sepa a qué puerta tiene que llamar:</p>
+      <!-- BOTTOM SECTION: 4 ELEMENTOS TÍPICOS PARA TOCAR CON EL DEDO -->
+      <div class="w-full mt-2">
+        <div class="text-center mb-2">
+          <span class="text-xs uppercase font-bold text-amber-300 tracking-wider">
+            👆 Toca con el dedo para meterlos en el saco:
+          </span>
         </div>
 
-        <div class="w-full space-y-3">
-          <button data-goal="agujeros" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">A</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Tapar agujeros y celebrarlo con los míos</div>
-              <div class="text-xs text-stone-400 mt-0.5">La hipoteca liquidada y un buen chuletón con los de casa.</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full">
+          
+          <!-- ITEM 1: BOTELLA DE PACHARÁN -->
+          <div data-item="pacharan" data-name="Pacharán Navarro" class="food-card cursor-pointer p-3 rounded-2xl bg-stone-900/90 border-2 border-stone-700/80 hover:border-amber-400 flex flex-col items-center text-center shadow-lg active:scale-95 transition-all select-none">
+            <!-- Pacharán SVG Icon -->
+            <div class="w-14 h-14 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 60 80" class="w-full h-full drop-shadow">
+                <!-- Bottle Body -->
+                <path d="M22,25 L38,25 L42,40 L44,72 L16,72 L18,40 Z" fill="#881337" stroke="#fb7185" stroke-width="1" />
+                <!-- Deep Wine Liquid Gradient -->
+                <rect x="18" y="42" width="24" height="28" fill="#4c0519" opacity="0.7" rx="2" />
+                <!-- Bottle Neck -->
+                <rect x="26" y="10" width="8" height="16" fill="#be123c" stroke="#fb7185" stroke-width="0.8" />
+                <!-- Cork Stopper -->
+                <rect x="25" y="4" width="10" height="7" rx="1.5" fill="#d97706" stroke="#92400e" stroke-width="1" />
+                <!-- Traditional Gold Label -->
+                <rect x="20" y="45" width="20" height="18" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="0.8" />
+                <path d="M23,50 L37,50 M25,54 L35,54 M26,58 L34,58" stroke="#854d0e" stroke-width="1" />
+                <!-- Navarra Sloe berries (Endrinas) -->
+                <circle cx="34" cy="38" r="3" fill="#1e1b4b" stroke="#4338ca" stroke-width="0.5" />
+                <circle cx="38" cy="35" r="2.5" fill="#1e1b4b" stroke="#4338ca" stroke-width="0.5" />
+              </svg>
             </div>
-          </button>
+            <div class="font-bold text-xs sm:text-sm text-stone-100 leading-tight">Pacharán</div>
+            <div class="text-[10px] text-stone-400 mt-0.5">Navarro con endrinas</div>
+            <span class="item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Tocar +
+            </span>
+          </div>
 
-          <button data-goal="jefe" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">B</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Mandar al jefe a paseo</div>
-              <div class="text-xs text-stone-400 mt-0.5">Decir adiós a madrugar los lunes de invierno.</div>
+          <!-- ITEM 2: CHURROS CALENTITOS -->
+          <div data-item="churros" data-name="Churros Calentitos" class="food-card cursor-pointer p-3 rounded-2xl bg-stone-900/90 border-2 border-stone-700/80 hover:border-amber-400 flex flex-col items-center text-center shadow-lg active:scale-95 transition-all select-none">
+            <!-- Churros SVG Icon -->
+            <div class="w-14 h-14 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 70 80" class="w-full h-full drop-shadow">
+                <!-- Paper Cone (Cucurucho blanco tradicional) -->
+                <polygon points="20,40 50,40 35,76" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" />
+                <path d="M22,46 L48,46 M26,54 L44,54 M30,62 L40,62" stroke="#e2e8f0" stroke-width="1" />
+                <!-- Crispy Churros poking out (Golden-brown ribbed) -->
+                <!-- Churro 1 (Left) -->
+                <path d="M24,42 Q20,18 28,10 Q32,18 29,42" fill="#d97706" stroke="#92400e" stroke-width="1.2" />
+                <!-- Churro 2 (Center tall) -->
+                <path d="M32,40 Q34,10 38,6 Q42,10 39,40" fill="#f59e0b" stroke="#b45309" stroke-width="1.2" />
+                <!-- Churro 3 (Right) -->
+                <path d="M41,42 Q48,16 46,12 Q40,16 37,42" fill="#d97706" stroke="#92400e" stroke-width="1.2" />
+                <!-- Sugar sparkles -->
+                <circle cx="28" cy="18" r="1" fill="#ffffff" />
+                <circle cx="36" cy="14" r="1.2" fill="#ffffff" />
+                <circle cx="42" cy="22" r="1" fill="#ffffff" />
+                <!-- Hot Steam Lines -->
+                <path d="M30,5 Q32,1 30,-2" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.6" stroke-linecap="round" />
+                <path d="M38,3 Q40,-1 38,-4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.6" stroke-linecap="round" />
+              </svg>
             </div>
-          </button>
+            <div class="font-bold text-xs sm:text-sm text-stone-100 leading-tight">Churros</div>
+            <div class="text-[10px] text-stone-400 mt-0.5">De la Mañueta</div>
+            <span class="item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Tocar +
+            </span>
+          </div>
 
-          <button data-goal="cuadrilla" class="olentzero-goal-btn w-full p-4 min-h-[68px] rounded-xl bg-stone-900/80 border border-stone-700 hover:border-amber-400/80 active:bg-stone-800 flex items-center gap-4 text-left transition-all active:scale-[0.99]">
-            <span class="w-8 h-8 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-xs font-serif font-bold text-amber-300 shrink-0">C</span>
-            <div>
-              <div class="font-semibold text-stone-100 text-sm sm:text-base">Invitar a toda la cuadrilla</div>
-              <div class="text-xs text-stone-400 mt-0.5">Ronda eterna en la plaza y fiesta por todo lo alto.</div>
+          <!-- ITEM 3: CHISTORRA DE NAVARRA -->
+          <div data-item="chistorra" data-name="Chistorra de Navarra" class="food-card cursor-pointer p-3 rounded-2xl bg-stone-900/90 border-2 border-stone-700/80 hover:border-amber-400 flex flex-col items-center text-center shadow-lg active:scale-95 transition-all select-none">
+            <!-- Chistorra SVG Icon -->
+            <div class="w-14 h-14 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 80 80" class="w-full h-full drop-shadow">
+                <!-- Rustic Wooden Cutting Board -->
+                <ellipse cx="40" cy="50" rx="36" ry="24" fill="#57361a" stroke="#3b2410" stroke-width="1.5" />
+                <ellipse cx="40" cy="48" rx="34" ry="22" fill="#784724" />
+                <!-- Coiled Red Chistorra -->
+                <path d="M22,46 C16,36 30,22 45,22 C60,22 66,36 60,48 C54,58 35,58 28,50 C22,42 30,34 40,32 C50,30 52,40 46,44" fill="none" stroke="#b91c1c" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
+                <!-- Chistorra Highlights (Savory oil sheen & spices) -->
+                <path d="M24,44 C20,38 31,25 45,25 C56,25 61,36 57,45" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="34" cy="30" r="1" fill="#fef08a" />
+                <circle cx="48" cy="27" r="1" fill="#fef08a" />
+                <circle cx="56" cy="42" r="1" fill="#fef08a" />
+                <!-- String tie end -->
+                <path d="M20,48 L15,53" stroke="#fef3c7" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
             </div>
-          </button>
+            <div class="font-bold text-xs sm:text-sm text-stone-100 leading-tight">Chistorra</div>
+            <div class="text-[10px] text-stone-400 mt-0.5">Frita y jugosa</div>
+            <span class="item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Tocar +
+            </span>
+          </div>
+
+          <!-- ITEM 4: CASTAÑAS ASADAS -->
+          <div data-item="castanas" data-name="Castañas Asadas" class="food-card cursor-pointer p-3 rounded-2xl bg-stone-900/90 border-2 border-stone-700/80 hover:border-amber-400 flex flex-col items-center text-center shadow-lg active:scale-95 transition-all select-none">
+            <!-- Castañas SVG Icon -->
+            <div class="w-14 h-14 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 70 80" class="w-full h-full drop-shadow">
+                <!-- Newspaper Cone (Cucurucho de papel de periódico) -->
+                <polygon points="18,38 52,38 35,74" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.2" />
+                <path d="M22,46 L48,46 M26,54 L44,54" stroke="#64748b" stroke-width="0.8" opacity="0.6" />
+                <!-- Roasted Chestnuts (Dark roasted brown shells with golden slit) -->
+                <!-- Chestnut 1 -->
+                <ellipse cx="28" cy="32" rx="9" ry="8" fill="#451a03" stroke="#270e02" stroke-width="1" />
+                <path d="M24,32 Q28,28 32,32" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
+                <!-- Chestnut 2 (Top center) -->
+                <ellipse cx="40" cy="24" rx="10" ry="8.5" fill="#3b1502" stroke="#270e02" stroke-width="1" />
+                <path d="M35,24 Q40,19 45,24" stroke="#fbbf24" stroke-width="3.5" stroke-linecap="round" />
+                <!-- Chestnut 3 (Right) -->
+                <ellipse cx="46" cy="34" rx="8.5" ry="7.5" fill="#451a03" stroke="#270e02" stroke-width="1" />
+                <path d="M42,34 Q46,30 50,34" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" />
+                <!-- Smoke puffs from hot embers -->
+                <path d="M36,12 Q34,6 38,2" fill="none" stroke="#f59e0b" stroke-width="1" opacity="0.7" />
+              </svg>
+            </div>
+            <div class="font-bold text-xs sm:text-sm text-stone-100 leading-tight">Castañas</div>
+            <div class="text-[10px] text-stone-400 mt-0.5">Asadas del monte</div>
+            <span class="item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Tocar +
+            </span>
+          </div>
+
         </div>
+
       </div>
 
     </section>
 
     <!-- ============================================== -->
-    <!-- SCREEN 3: CALM & ATMOSPHERIC CONSULTING STATE  -->
+    <!-- SCREEN 3: TRANSICIÓN MÁGICA (ABRIENDO EL SACO) -->
     <!-- ============================================== -->
     <section id="screen-reveal-loading" class="screen-view hidden w-full flex flex-col items-center justify-center text-center max-w-md py-12 my-auto">
       
-      <!-- Subtle Traditional Flame / Warmth Indicator -->
-      <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
-        <div class="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-400/30 flex items-center justify-center animate-pulse">
-          <div class="w-8 h-8 rounded-full bg-amber-400/30"></div>
+      <!-- Golden Sack Opening Effect -->
+      <div class="relative w-24 h-24 mb-5 flex items-center justify-center">
+        <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400/60 flex items-center justify-center animate-ping"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-4xl">
+          ✨
         </div>
       </div>
 
       <h2 class="font-serif font-bold text-2xl text-amber-100">
-        Consultando al Olentzero...
+        ¡El Olentzero abre su saco!
       </h2>
       
-      <p class="text-stone-300 text-sm mt-2 max-w-xs mx-auto leading-relaxed">
-        El Olentzero revisa en su txabola los números de Loterías Torico que mejor encajan con tu respuesta...
+      <p id="loading-items-text" class="text-stone-300 text-sm mt-2 max-w-xs mx-auto leading-relaxed">
+        Sacando los dos décimos más afortunados para ti...
       </p>
 
-      <div class="flex items-center justify-center gap-2 mt-6">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0s"></span>
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0.2s"></span>
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="animation-delay: 0.4s"></span>
+      <div class="flex items-center justify-center gap-2 mt-5">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce" style="animation-delay: 0s"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce" style="animation-delay: 0.15s"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce" style="animation-delay: 0.3s"></span>
       </div>
     </section>
 

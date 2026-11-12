@@ -36,7 +36,7 @@
   let state = {
     stock: [],
     settings: { ...DEFAULT_SETTINGS },
-    olentzeroChoices: { answer: '', log: '', goal: '' },
+    selectedItems: [],
     recommendedTickets: [],
     adminInputPin: '',
     tripleTapCount: 0,
@@ -174,6 +174,60 @@
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.06);
+      } catch (e) {}
+    },
+
+    whoosh: () => {
+      if (!state.settings.soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.22);
+        gain.gain.setValueAtTime(0.09, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.22);
+      } catch (e) {}
+    },
+
+    sackDrop: () => {
+      if (!state.settings.soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        // Deep soft sack thump
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.16);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.16);
+
+        // Pleasant high chime
+        setTimeout(() => {
+          if (!audioCtx) return;
+          const chime = audioCtx.createOscillator();
+          const chimeGain = audioCtx.createGain();
+          chime.type = 'sine';
+          chime.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+          chimeGain.gain.setValueAtTime(0.09, audioCtx.currentTime);
+          chimeGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+          chime.connect(chimeGain);
+          chimeGain.connect(audioCtx.destination);
+          chime.start();
+          chime.stop(audioCtx.currentTime + 0.25);
+        }, 50);
       } catch (e) {}
     },
 
@@ -371,8 +425,8 @@
 
   function resetToAttract() {
     clearTimers();
-    state.olentzeroChoices = { answer: '', log: '', goal: '' };
-    resetOlentzeroSteps();
+    state.selectedItems = [];
+    resetSackGame();
     showScreen('attract');
   }
 
@@ -416,76 +470,184 @@
   }
 
   // ==========================================================================
-  // 7. OLENTZERO EXPERIENCE (~20-25 seconds total)
+  // 7. EL SACO DEL OLENTZERO (TOCAR 3 ELEMENTOS TÍPICOS DE NAVARRA)
   // ==========================================================================
-  function resetOlentzeroSteps() {
-    const step1 = document.getElementById('olentzero-step-1');
-    const step2 = document.getElementById('olentzero-step-2');
-    const step3 = document.getElementById('olentzero-step-3');
-    const progress = document.getElementById('olentzero-progress');
-    const indicator = document.getElementById('olentzero-step-indicator');
+  function resetSackGame() {
+    state.selectedItems = [];
 
-    if (step1) step1.classList.remove('hidden');
-    if (step2) step2.classList.add('hidden');
-    if (step3) step3.classList.add('hidden');
-    if (progress) progress.style.width = '33%';
-    if (indicator) indicator.textContent = 'Pregunta 1 de 3';
+    // Reset counter & dots
+    const counterText = document.getElementById('sack-counter-text');
+    if (counterText) counterText.textContent = '0 / 3';
+
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById(`dot-${i}`);
+      if (dot) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-stone-700 border border-stone-600 transition-all';
+      }
+    }
+
+    // Reset bubble
+    const bubbleText = document.getElementById('bubble-text');
+    if (bubbleText) {
+      bubbleText.innerHTML = '«¡Aupa! Toca la <strong class="text-amber-300">botella de pacharán</strong>, los <strong class="text-amber-300">churros</strong> y la <strong class="text-amber-300">chistorra</strong> para meterlos al saco.»';
+    }
+
+    // Reset sack
+    const sack = document.getElementById('olentzero-sack');
+    const sackAura = document.getElementById('sack-aura');
+    if (sack) {
+      sack.classList.remove('sack-bounce', 'sack-glow');
+    }
+    if (sackAura) {
+      sackAura.setAttribute('opacity', '0');
+    }
+
+    // Reset item cards
+    document.querySelectorAll('.food-card').forEach(card => {
+      card.classList.remove('in-sack');
+      const badge = card.querySelector('.item-badge');
+      if (badge) {
+        badge.textContent = 'Tocar +';
+        badge.className = 'item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30';
+      }
+    });
+  }
+
+  function handleFoodItemTouch(cardEl) {
+    if (state.selectedItems.length >= 3) return;
+    const itemId = cardEl.getAttribute('data-item');
+    const itemName = cardEl.getAttribute('data-name') || itemId;
+    if (state.selectedItems.includes(itemId)) return;
+
+    onUserActivity();
+    state.selectedItems.push(itemId);
+    const count = state.selectedItems.length;
+
+    // Visual state on card
+    cardEl.classList.add('in-sack');
+    const badge = cardEl.querySelector('.item-badge');
+    if (badge) {
+      badge.textContent = '✓ En el saco';
+      badge.className = 'item-badge mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-400/40';
+    }
+
+    // Sound: whoosh flying into sack
+    Sound.whoosh();
+
+    // Fly animation to sack
+    animateItemFlyingToSack(cardEl, () => {
+      // Sound on landing
+      Sound.sackDrop();
+
+      // Sack bounce
+      const sack = document.getElementById('olentzero-sack');
+      if (sack) {
+        sack.classList.remove('sack-bounce');
+        void sack.offsetWidth;
+        sack.classList.add('sack-bounce');
+      }
+
+      // Update counter and dot
+      const counterText = document.getElementById('sack-counter-text');
+      if (counterText) counterText.textContent = `${count} / 3`;
+
+      const dot = document.getElementById(`dot-${count}`);
+      if (dot) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-300 shadow-sm shadow-amber-400/60 scale-125 transition-all';
+      }
+
+      // Update bubble message
+      const bubbleText = document.getElementById('bubble-text');
+      if (bubbleText) {
+        if (count === 1) {
+          bubbleText.innerHTML = `«¡Opa! <strong>${itemName}</strong> bien metido al saco. Toca 2 cosas más para tu suerte.»`;
+        } else if (count === 2) {
+          bubbleText.innerHTML = `«¡Qué buen manjar! Ya van 2 en el saco. ¡Toca la última para abrir los décimos!»`;
+        } else if (count === 3) {
+          bubbleText.innerHTML = `«¡Banquete completo! ¡El Olentzero abre su saco para darte la suerte!»`;
+        }
+      }
+
+      // If full (3 items)
+      if (count === 3) {
+        const sackAura = document.getElementById('sack-aura');
+        if (sackAura) sackAura.setAttribute('opacity', '0.7');
+        if (sack) sack.classList.add('sack-glow');
+
+        setTimeout(() => {
+          triggerReveal();
+        }, 800);
+      }
+    });
+  }
+
+  function animateItemFlyingToSack(cardEl, onLand) {
+    const cardRect = cardEl.getBoundingClientRect();
+    const sackTarget = document.getElementById('sack-mouth-target') || document.getElementById('olentzero-sack');
+    if (!sackTarget) {
+      if (onLand) onLand();
+      return;
+    }
+    const sackRect = sackTarget.getBoundingClientRect();
+
+    const svgIcon = cardEl.querySelector('svg');
+    const clone = document.createElement('div');
+    clone.className = 'flying-clone';
+    clone.style.width = '48px';
+    clone.style.height = '48px';
+    clone.style.left = `${cardRect.left + cardRect.width / 2 - 24}px`;
+    clone.style.top = `${cardRect.top + cardRect.height / 2 - 24}px`;
+
+    if (svgIcon) {
+      clone.innerHTML = svgIcon.outerHTML;
+    } else {
+      clone.textContent = '🎁';
+      clone.style.fontSize = '30px';
+    }
+
+    document.body.appendChild(clone);
+
+    const targetX = sackRect.left + sackRect.width / 2 - 24;
+    const targetY = sackRect.top + sackRect.height / 2 - 24;
+
+    requestAnimationFrame(() => {
+      clone.style.transform = `translate3d(${targetX - (cardRect.left + cardRect.width / 2 - 24)}px, ${targetY - (cardRect.top + cardRect.height / 2 - 24)}px, 0) scale(0.18) rotate(360deg)`;
+      clone.style.opacity = '0.2';
+    });
+
+    setTimeout(() => {
+      if (clone.parentNode) clone.parentNode.removeChild(clone);
+      if (onLand) onLand();
+    }, 550);
   }
 
   function setupOlentzeroMode() {
-    resetOlentzeroSteps();
+    resetSackGame();
     showScreen('gameOlentzero');
 
-    // Step 1: Conducta
-    document.querySelectorAll('.olentzero-opt-btn').forEach(btn => {
-      btn.onclick = () => {
-        Sound.tap();
-        state.olentzeroChoices.answer = btn.getAttribute('data-answer');
-        document.getElementById('olentzero-step-1').classList.add('hidden');
-        document.getElementById('olentzero-step-2').classList.remove('hidden');
-        document.getElementById('olentzero-progress').style.width = '66%';
-        document.getElementById('olentzero-step-indicator').textContent = 'Pregunta 2 de 3';
-      };
-    });
-
-    // Step 2: Ofrenda Chimenea
-    document.querySelectorAll('.olentzero-log-btn').forEach(btn => {
-      btn.onclick = () => {
-        Sound.wood();
-        state.olentzeroChoices.log = btn.getAttribute('data-log');
-        document.getElementById('olentzero-step-2').classList.add('hidden');
-        document.getElementById('olentzero-step-3').classList.remove('hidden');
-        document.getElementById('olentzero-progress').style.width = '100%';
-        document.getElementById('olentzero-step-indicator').textContent = 'Pregunta 3 de 3';
-      };
-    });
-
-    // Step 3: Destino Premio
-    document.querySelectorAll('.olentzero-goal-btn').forEach(btn => {
-      btn.onclick = () => {
-        Sound.chimes();
-        state.olentzeroChoices.goal = btn.getAttribute('data-goal');
-        triggerReveal();
+    document.querySelectorAll('.food-card').forEach(card => {
+      card.onclick = (e) => {
+        e.preventDefault();
+        handleFoodItemTouch(card);
       };
     });
   }
 
   function getOlentzeroVerdict() {
-    const { answer, log, goal } = state.olentzeroChoices;
-
-    if (goal === 'jefe') {
-      return `"El Olentzero ha examinado tu caso junto al fuego. Dice que a ese jefe le vas a mandar una postal de despedida con este par de décimos de Loterías Torico. ¡Aupa ahí!"`;
+    const items = state.selectedItems;
+    if (items.includes('pacharan') && items.includes('churros') && items.includes('chistorra')) {
+      return `"¡Menudo almuerzo navarro le has metido al saco! Con el pacharán, los churros de la Mañueta y la chistorra bien frita, el Olentzero bendice tu suerte con estos dos décimos de Loterías Torico."`;
     }
-    if (goal === 'cuadrilla') {
-      return `"Al Olentzero le gusta la gente que cuida a su cuadrilla. Con buena leña y lealtad, el bombo de San Ildefonso canta mejor: aquí tienes tus dos números de la suerte."`;
+    if (items.includes('pacharan')) {
+      return `"Un buen trago de pacharán navarro calienta cualquier invierno en el monte. El Olentzero premia tu buen gusto con esta pareja de décimos preparados en ventanilla."`;
     }
-    if (log === 'pacharan') {
-      return `"Un trago de pacharán alegra cualquier invierno. El Olentzero bendice tu jugada en Loterías Torico con esta pareja de décimos listos en ventanilla."`;
+    if (items.includes('chistorra')) {
+      return `"La chistorra de la tierra es sagrada en el almuerzo. Con buena vianda en el saco, los bombos de Navidad cantarán a tu favor en Loterías Torico."`;
     }
-    if (answer === 'trasto') {
-      return `"Dice el Olentzero que eres algo trasto, pero como tienes nobleza navarra te perdona el carbón y te confía estos dos números del sorteo."`;
+    if (items.includes('churros')) {
+      return `"Los churros calentitos de buena mañana son la mayor alegría. El Olentzero te entrega con cariño estos dos números para el 22 de diciembre."`;
     }
-    return `"Dice el Olentzero que tu corazón es noble como el roble de Urbasa. Te deja estos dos números bendecidos para el 22 de diciembre."`;
+    return `"Dice el Olentzero que has llenado su saco con los mejores manjares de la tierra. Te confía estos dos números de la suerte para el Sorteo de Navidad."`;
   }
 
   function triggerReveal() {
@@ -494,7 +656,7 @@
 
     setTimeout(() => {
       displayFinalResults(ticket1, ticket2);
-    }, 2000);
+    }, 1200);
   }
 
   function displayFinalResults(ticket1, ticket2) {
@@ -515,6 +677,7 @@
     // Fill verdict
     document.getElementById('verdict-text').textContent = getOlentzeroVerdict();
   }
+
 
   // ==========================================================================
   // 8. ADMIN & BULK NUMBER LOADING SYSTEM (Con Código PIN)
