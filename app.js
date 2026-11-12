@@ -401,7 +401,7 @@
     clearTimers();
     const timeout = parseInt(state.settings.timeoutSeconds, 10);
 
-    if (timeout <= 0 || currentScreen === 'attract') {
+    if (timeout <= 0 || (currentScreen === 'gameOlentzero' && state.selectedItems.length === 0)) {
       if (timerPill) timerPill.classList.add('hidden');
       return;
     }
@@ -427,7 +427,7 @@
     clearTimers();
     state.selectedItems = [];
     resetSackGame();
-    showScreen('attract');
+    setupOlentzeroMode();
   }
 
   function onUserActivity() {
@@ -1155,7 +1155,7 @@
       };
     }
 
-    showScreen('attract');
+    setupOlentzeroMode();
   }
 
   if (document.readyState === 'loading') {
